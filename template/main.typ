@@ -46,12 +46,11 @@ By default, 'Ilm generates a cover/title page with a title, author(s), date, and
 #show: ilm.with(
   title: [Your Title],
   authors: "Author Name",
-  date: datetime(year: 2024, month: 03, day: 19),
   abstract: [Your content goes here],
 )
 ```
 
-Only the `title` and `authors` fields are necessary; `date` and `abstract` are optional.
+Only the `title` and `authors` fields are necessary; `date` (default: `datetime.today()`) and `abstract` are optional.
 
 === Multiple authors
 You can specify multiple authors by providing an array. Authors will be displayed on separate lines on the cover page, with font size automatically adjusted based on the number of authors:
@@ -64,7 +63,6 @@ You can specify multiple authors by providing an array. Authors will be displaye
 ```
 
 The `authors` parameter accepts either a string (single author) or an array of strings (multiple authors).
-
 
 === Date format
 

@@ -102,7 +102,7 @@
   // The value needs to be of the 'datetime' type.
   // More info: https://typst.app/docs/reference/foundations/datetime/
   // Example: datetime(year: 2024, month: 03, day: 17)
-  date: none,
+  date: datetime.today(),
   // Format in which the date will be displayed on cover page.
   // More info: https://typst.app/docs/reference/foundations/datetime/#format
   // The default format will display date as: MMMM DD, YYYY
