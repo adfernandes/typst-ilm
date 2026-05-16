@@ -51,7 +51,15 @@ can add a show rule like this at the top of your file:
 
 ## Configuration
 
-This template exports the `ilm` function with the following named arguments:
+The template exports the `ilm` function with several named arguments (read: options). This function also accepts a single, positional argument for the body.
+
+> The language setting for text (`lang` parameter of `text` function) should be
+> defined before the `ilm` function so that headings such as table of contents and
+> bibliography will be defined as per the text language. See example above.
+
+### Options
+
+The list below shows a _brief description_ for each option. For a detailed explanation of these options, see the [example.pdf](https://github.com/talal/ilm/blob/main/example.pdf) file.
 
 - `cover-page`\
   type: [string], [content], or `none`\
@@ -141,17 +149,7 @@ This template exports the `ilm` function with the following named arguments:
 - `listing-index`\
   type: [dictionary]\
   default: `(enabled: false, title: "Index of Listings")`\
-  description: Setting this to `true` will display an index of listing (code block) figures at the end of the document. |
-
-The above table gives you a _brief description_ of the different options that you can
-choose to customize the template. For a detailed explanation of these options, see the
-[example.pdf](https://github.com/talal/ilm/blob/main/example.pdf) file.
-
-The function also accepts a single, positional argument for the body.
-
-> The language setting for text (`lang` parameter of `text` function) should be
-> defined before the `ilm` function so that headings such as table of contents and
-> bibliography will be defined as per the text language.
+  description: Setting this to `true` will display an index of listing (code block) figures at the end of the document.
 
 [bibliography]: https://typst.app/docs/reference/model/bibliography/
 [bool]: https://typst.app/docs/reference/foundations/bool/
