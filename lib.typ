@@ -228,7 +228,8 @@
             v-space
             block(width: 80%)[
               // Default leading is 0.65em.
-              #par(leading: 0.78em, justify: true, linebreaks: "optimized", abstract)
+              #set par(leading: 0.78em, justify: true, linebreaks: "optimized")
+              #abstract
             ]
           }
 
