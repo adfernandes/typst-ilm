@@ -8,6 +8,27 @@
 #let smallcaps(body) = std-smallcaps(text(tracking: 0.6pt, body))
 #let upper(body) = std-upper(text(tracking: 0.6pt, body))
 
+// Helper to extract raw text customizations.
+// TODO: Remove backwards compatibility for `use-typst-defaults`, `custom-font`, and `custom-size` in future version
+#let _get-raw-text-args(raw-text) = {
+  let use-defaults = (
+    (type(raw-text) == str and raw-text == "use-typst-default")
+      or (type(raw-text) == dictionary and raw-text.at("use-typst-defaults", default: false))
+  )
+
+  if use-defaults or type(raw-text) != dictionary {
+    return (:)
+  }
+
+  let raw-font = raw-text.at("font", default: raw-text.at("custom-font", default: (
+    "Iosevka",
+    "Fira Mono",
+  )))
+  let raw-size = raw-text.at("size", default: raw-text.at("custom-size", default: 9pt))
+
+  (font: raw-font, size: raw-size)
+}
+
 // Colors used across the template.
 #let stroke-color = luma(200)
 #let fill-color = luma(250)
@@ -116,27 +137,7 @@
   set text(size: 12pt) // default is 11pt
 
   // Customize raw text formatting.
-  show raw: it => {
-    // TODO: Remove backwards compatibility for `use-typst-defaults` in future version
-    let use-defaults = (
-      (type(raw-text) == str and raw-text == "use-typst-default") or
-      (type(raw-text) == dictionary and raw-text.at("use-typst-defaults", default: false))
-    )
-
-    if use-defaults {
-      it
-    } else if type(raw-text) == dictionary {
-      set text(
-        // Reference: Typst's default is Fira Mono at 8.8pt
-        // TODO: Remove backwards compatibility for `custom-font` and `custom-size` in future version
-        font: raw-text.at("font", default: raw-text.at("custom-font", default: ("Iosevka", "Fira Mono"))),
-        size: raw-text.at("size", default: raw-text.at("custom-size", default: 9pt)),
-      )
-      it
-    } else {
-      it
-    }
-  }
+  show raw: set text(.._get-raw-text-args(raw-text))
 
   // Configure page size and margins.
   set page(
@@ -237,16 +238,16 @@
       context {
         // Get current page number.
         let i = counter(page).at(here()).first()
-        
+
         // Only get chapter info if needed
         let chapter = none
         let on-chapter-page = false
-        
+
         if footer.ends-with("with-chapter") {
           // Are we on a page that starts a chapter?
           let target = heading.where(level: 1)
           on-chapter-page = query(target).any(it => it.location().page() == i)
-          
+
           // Find the chapter of the section we are currently in.
           if not on-chapter-page {
             let before = query(target.before(here()))
@@ -258,14 +259,14 @@
             }
           }
         }
-        
+
         let gap = 1.75em
-        
+
         // Apply footer style
         if footer == "page-number-alternate-with-chapter" {
           let is-odd = calc.odd(i)
           let aln = if is-odd { right } else { left }
-          
+
           if chapter != none {
             if is-odd {
               align(aln)[#chapter #h(gap) #i]
