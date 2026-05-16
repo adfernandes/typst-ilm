@@ -14,42 +14,6 @@
 #let upper(body) = std-upper(text(tracking: 0.6pt, body))
 
 // ══════════ Helper Functions ══════════
-// Extract raw text customizations.
-// TODO: Remove backwards compatibility for `use-typst-defaults`, `custom-font`, and
-// `custom-size` in future version.
-#let _get-raw-text-args(raw-text) = {
-  let use-defaults = (
-    (type(raw-text) == str and raw-text == "use-typst-default")
-      or (type(raw-text) == dictionary and raw-text.at("use-typst-defaults", default: false))
-  )
-
-  if use-defaults or type(raw-text) != dictionary {
-    return (:)
-  }
-
-  let raw-font = raw-text.at("font", default: raw-text.at("custom-font", default: (
-    "Iosevka",
-    "DejaVu Sans Mono",
-  )))
-  let raw-size = raw-text.at("size", default: raw-text.at("custom-size", default: 9pt))
-
-  (font: raw-font, size: raw-size)
-}
-
-// Normalize the authors parameter.
-// Handles the deprecated `author` parameter and normalizes to an array.
-#let _normalize-authors(authors, author) = {
-  if authors != none {
-    if type(authors) == str {
-      (authors,)
-    } else {
-      authors
-    }
-  } else {
-    (author,)
-  }
-}
-
 // Render the footer content based on the footer style.
 #let _render-footer(footer) = context {
   // Get current page number.
@@ -76,7 +40,7 @@
     }
   }
 
-    let gap = 1.75em
+  let gap = 1.75em
 
   // Apply footer style.
   if footer == "page-number-alternate-with-chapter" {
@@ -124,12 +88,9 @@
 #let ilm(
   // The title for your work.
   title: [Your Title],
-  // Author's name.
-  // TODO: Deprecated. Use `authors` instead. Will be removed in a future version.
-  author: "Author",
   // Author(s) of your work. Can be a string or an array of strings.
   // If an array is provided, authors will be displayed on separate lines on the cover page.
-  authors: none,
+  authors: "Author",
   // Cover page customization.
   // Set to "use-ilm-default" to use Ilm's default cover page,
   // set to `none` to skip the cover page entirely,
@@ -205,9 +166,12 @@
   // The content of your work.
   body,
 ) = {
-  // Determine the final authors to use (new `authors` parameter takes precedence over
-  // deprecated `author`). Normalize to array for simpler processing.
-  let final-authors = _normalize-authors(authors, author)
+  // Determine the final authors to use. Normalize to array for simpler processing.
+  let final-authors = if type(authors) == str {
+    (authors,)
+  } else {
+    authors
+  }
 
   // Set the document's metadata.
   set document(title: title, author: final-authors.join(", "))
@@ -216,7 +180,8 @@
   set text(size: 12pt) // default is 11pt
 
   // Customize raw text formatting.
-  show raw: set text(.._get-raw-text-args(raw-text))
+  let raw-text-args = if type(raw-text) == dictionary { raw-text } else { (:) }
+  show raw: set text(..raw-text-args)
 
   // Configure page size and margins.
   set page(
